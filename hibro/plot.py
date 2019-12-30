@@ -96,6 +96,7 @@ class Line(Plot):
                 x=data["data"]["time"],
                 y=data["data"][entity_config["entity"]],
                 mode="lines",
+                line_shape="hv",
                 name=name,
             )
         )
