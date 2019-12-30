@@ -29,7 +29,7 @@ Base = declarative_base()
 
 class States(Base):  # type: ignore
     """State change history SQLAlchemy model.
-    
+
     Directly taken from homeassistant."""
 
     __tablename__ = "states"
@@ -77,7 +77,7 @@ def get_data(
     df = df[(df[entity] != "unknown") & (df[entity] != "Invalid")]
     if resample is not None:
         df = df.set_index("time")
-        df = df.astype(float).resample(resample).agg(aggregate or "mean")
+        df = df.astype(float).resample("s").pad().resample(resample).agg(aggregate or "mean")
         df = df.reset_index()
     elif aggregate is not None:
         if aggregate == "ptp":
@@ -85,7 +85,7 @@ def get_data(
         else:
             agg = aggregate
         df = df.set_index("time")
-        df = df.astype(float).agg(agg)
+        df = df.astype(float).resample("s").agg(agg)
         df = df.reset_index()
     return {
         "name": attributes.get("friendly_name"),
