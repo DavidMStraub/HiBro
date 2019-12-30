@@ -22,6 +22,7 @@ setup(
         "pandas",
     ],
     long_description=README,
+    long_description_content_type="text/markdown",
     include_package_data=True,
     keywords="hibro",
     name="hibro",
