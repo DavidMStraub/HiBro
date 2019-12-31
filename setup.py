@@ -20,6 +20,7 @@ setup(
         "sqlalchemy",
         "voluptuous",
         "pandas",
+        "tzlocal",
     ],
     long_description=README,
     long_description_content_type="text/markdown",

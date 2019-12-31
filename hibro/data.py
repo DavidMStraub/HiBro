@@ -6,17 +6,14 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
+import tzlocal
 from sqlalchemy import (
-    Boolean,
     Column,
     DateTime,
     ForeignKey,
-    Index,
     Integer,
     String,
     Text,
-    distinct,
-    func,
 )
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -77,7 +74,13 @@ def get_data(
     df = df[(df[entity] != "unknown") & (df[entity] != "Invalid")]
     if resample is not None:
         df = df.set_index("time")
-        df = df.astype(float).resample("s").pad().resample(resample).agg(aggregate or "mean")
+        df = (
+            df.astype(float)
+            .resample("s")
+            .pad()
+            .resample(resample)
+            .agg(aggregate or "mean")
+        )
         df = df.reset_index()
     elif aggregate is not None:
         if aggregate == "ptp":
@@ -87,6 +90,7 @@ def get_data(
         df = df.set_index("time")
         df = df.astype(float).resample("s").agg(agg)
         df = df.reset_index()
+    df.loc[:, "time"] = df.loc[:, "time"].dt.tz_convert(tzlocal.get_localzone())
     return {
         "name": attributes.get("friendly_name"),
         "unit": attributes.get("unit_of_measurement"),
