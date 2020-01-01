@@ -12,6 +12,7 @@ setup(
     author="David Straub",
     author_email="straub@protonmail.com",
     python_requires=">=3.6",
+    url="https://github.com/DavidMStraub/HiBro",
     description="Standalone history browser for Home Assistant",
     install_requires=[
         "Click>=7.0",
