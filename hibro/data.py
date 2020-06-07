@@ -61,6 +61,8 @@ def get_data(
     if duration is not None:
         query = query.filter(States.created >= datetime.utcnow() - duration)
     df = pd.read_sql_query(query.statement, con=engine)
+    if len(df) == 0:
+        return None
     attributes = json.loads(df.iloc[0]["attributes"])
     if attribute is not None:
         df.loc[:, "attributes"] = df.loc[:, "attributes"].map(
@@ -90,6 +92,9 @@ def get_data(
         df = df.set_index("time")
         df = df.astype(float).resample("s").agg(agg)
         df = df.reset_index()
+    if df.loc[:, "time"].dt.tz is None:
+        # localize to UTC if tz-naive
+        df.loc[:, "time"].dt.tz_localize("UTC")
     df.loc[:, "time"] = df.loc[:, "time"].dt.tz_convert(tzlocal.get_localzone())
     return {
         "name": attributes.get("friendly_name"),
