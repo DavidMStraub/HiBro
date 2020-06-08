@@ -94,7 +94,7 @@ def get_data(
         df = df.reset_index()
     if df.loc[:, "time"].dt.tz is None:
         # localize to UTC if tz-naive
-        df.loc[:, "time"].dt.tz_localize("UTC")
+        df.loc[:, "time"] = df.loc[:, "time"].dt.tz_localize("UTC")
     df.loc[:, "time"] = df.loc[:, "time"].dt.tz_convert(tzlocal.get_localzone())
     return {
         "name": attributes.get("friendly_name"),
