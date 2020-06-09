@@ -31,6 +31,6 @@ setup(
     packages=find_packages(include=["hibro", "hibro.*"]),
     entry_points={"console_scripts": ["hibro=hibro.__main__:main"]},
     test_suite="tests",
-    version="0.2.0",
+    version="0.2.1",
     zip_safe=False,
 )
