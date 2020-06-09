@@ -53,7 +53,7 @@ class Plot:
             duration=duration,
             resample=resample,
             aggregate=aggregate,
-        )
+        ) or {}
         name = data.get("name") or entity
         if resample:
             name = f"{name} ({resample}, {aggregate or 'mean'})"
@@ -91,15 +91,16 @@ class Line(Plot):
     def trace(self, figure, entity_config: dict):
         """Add a single Plotly trace for one entity to the `figure`."""
         name, unit, data = self.data_entity(entity_config)
-        figure.add_trace(
-            go.Scatter(
-                x=data["data"]["time"],
-                y=data["data"][entity_config["entity"]],
-                mode="lines",
-                line_shape="hv",
-                name=name,
+        if data != {}:
+            figure.add_trace(
+                go.Scatter(
+                    x=data["data"]["time"],
+                    y=data["data"][entity_config["entity"]],
+                    mode="lines",
+                    line_shape="hv",
+                    name=name,
+                )
             )
-        )
         return name, unit
 
     def graph(self) -> dcc.Graph:
@@ -147,7 +148,8 @@ class Box(Plot):
     def trace(self, figure, entity_config: dict):
         """Add a single Plotly trace for one entity to the `figure`."""
         name, unit, data = self.data_entity(entity_config)
-        figure.add_trace(go.Box(y=data["data"][entity_config["entity"]], name=name,))
+        if data != {}:
+            figure.add_trace(go.Box(y=data["data"][entity_config["entity"]], name=name,))
         return name, unit
 
     def graph(self) -> dcc.Graph:
@@ -204,8 +206,9 @@ class Pie(Plot):
         values = []
         for entity_config in self.config["entities"]:
             name, data = self.piece(entity_config)
-            labels.append(name)
-            values.append(data["data"][0][0])
+            if data != {}:
+                labels.append(name)
+                values.append(data["data"][0][0])
         fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
         fig.update_layout(
             font=dict(family="Roboto", color="#333333"),
